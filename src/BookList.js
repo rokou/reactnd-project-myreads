@@ -13,6 +13,7 @@ class BookList extends Component {
                   authors={book.authors} 
                   cover={book.hasOwnProperty('imageLinks') ? book.imageLinks.thumbnail : ''}
                   shelf={book.shelf}
+                  updateBookShelf={this.props.updateBookShelf}
                   />
           ))}
         </ol>

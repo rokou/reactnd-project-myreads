@@ -67,18 +67,19 @@ class BooksApp extends React.Component {
           </div>
           <div className="open-search">
             <Link 
-              to='/create'
+              to='/search'
               className='search-page'>
                 Add a book
             </Link>
           </div>
         </div>
         )}/>
-        <Route path='/create'
+        <Route path='/search'
           render = {() => (
             <div>
+              {console.log('this.state.books', this.state.books)}
               <SearchPage updateBookShelf={this.updateBookShelf}
-                          booksAPISearch={this.booksAPISearch}/>
+                          books={this.state.books}/>
             </div>
           )}
         />

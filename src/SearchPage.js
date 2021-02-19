@@ -1,16 +1,8 @@
 import React, { Component } from 'react'
 import BookSearch from './BookSearch.js'
 import { Link } from 'react-router-dom'
+import * as BooksAPI from './BooksAPI'
 class SearchPage extends Component {
-  searchTerms = ['Android', 'Art', 'Artificial Intelligence', 'Astronomy', 'Austen', 'Baseball', 'Basketball', 
-                'Bhagat', 'Biography', 'Brief', 'Business', 'Camus', 'Cervantes', 'Christie', 'Classics', 'Comics', 
-                'Cook', 'Cricket', 'Cycling', 'Desai', 'Design', 'Development', 'Digital Marketing', 'Drama', 'Drawing', 
-                'Dumas', 'Education', 'Everything', 'Fantasy', 'Film', 'Finance', 'First', 'Fitness', 'Football', 
-                'Future', 'Games', 'Gandhi', 'Homer', 'Horror', 'Hugo', 'Ibsen', 'Journey', 'Kafka', 'King', 'Lahiri', 
-                'Larsson', 'Learn', 'Literary Fiction', 'Make', 'Manage', 'Marquez', 'Money', 'Mystery', 'Negotiate', 
-                'Painting', 'Philosophy', 'Photography', 'Poetry', 'Production', 'Programming', 'React', 'Redux', 
-                'River', 'Robotics', 'Rowling', 'Satire', 'Science Fiction', 'Shakespeare', 'Singh', 'Swimming', 'Tale',
-                 'Thrun', 'Time', 'Tolstoy', 'Travel', 'Ultimate', 'Virtual Reality', 'Web Development', 'iOS']
   state = {
     searchField: '',
     searchResults: []
@@ -25,22 +17,27 @@ class SearchPage extends Component {
   }
 
   filterbySearchTerms = () => {
-      //Filter terms so valid searches will be searched
-      const filteredSearchTerm = this.searchTerms.filter(term => {
-        return (this.state.searchField === term)
-      })
-      if (filteredSearchTerm.length > 0) {
-        const searchPromise = this.props.booksAPISearch(filteredSearchTerm[0])
-        searchPromise.then(books =>{
-          this.setState({
-            searchResults: books
+    BooksAPI.search(this.state.searchField).then((books) => {
+      if (typeof books != "undefined" && !books.error) {
+        let checkBooks = []
+        for (const item in this.props.books){
+          checkBooks = books.map(book => {
+            if (book.title === this.props.books[item].title){
+              book.shelf = this.props.books[item].shelf
+            }
+            return book
           })
+        }
+        console.log('checkBooks', checkBooks)
+        this.setState({
+          searchResults: checkBooks
         })
       } else {
         this.setState({
           searchResults: []
         })
       }
+    })
   }
 
   render() {
@@ -68,7 +65,7 @@ class SearchPage extends Component {
         </div>
         <div className="search-books-results">
         <BookSearch books={this.state.searchResults}
-                      updateBookShelf={this.props.updateBookShelf}/>
+                    updateBookShelf={this.props.updateBookShelf}/>
         </div>
       </div>
     )
