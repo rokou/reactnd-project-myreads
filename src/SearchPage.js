@@ -65,7 +65,7 @@ class SearchPage extends Component {
         </div>
         <div className="search-books-results">
         <BookSearch books={this.state.searchResults}
-                    updateBookShelf={this.props.updateBookShelf}/>
+                    updateBookShelf={this.props.updateBookShelf.bind(this)}/>
         </div>
       </div>
     )

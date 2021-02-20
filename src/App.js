@@ -17,22 +17,16 @@ class BooksApp extends React.Component {
     this.refreshBookShelves()
   }
 
-  refreshBookShelves = () => {
-    BooksAPI.getAll()
-     .then((books) =>{
-       this.setState(() => ({
-         books
-       }))
-     })
+  async refreshBookShelves() {
+    const books = await BooksAPI.getAll()
+    this.setState({
+      books
+    })
   }
   updateBookShelf = (bookId, shelf) =>{
     BooksAPI.get(bookId).then(book => {
-      console.log('book: ')
-      console.log(book)
       BooksAPI.update(book, shelf)
       .then(value => {
-        console.log('value: ')
-        console.log(value)
         this.refreshBookShelves()
       })
     })
@@ -51,38 +45,34 @@ class BooksApp extends React.Component {
   render() {
     return (
       <div className="app">
-        <Route exact path='/' 
-        render = {() => (
+        <Route exact path='/'>
           <div className="list-books">
-          <div className="list-books-title">
-            <h1>MyReads</h1>
+            <div className="list-books-title">
+              <h1>MyReads</h1>
+            </div>
+            <div className="list-books-content">
+              {this.shelves.map(shelf => (
+                <Shelf key={shelf}
+                      shelf={shelf}
+                      books={this.state.books}
+                      updateBookShelf={this.updateBookShelf.bind(this)}/>
+              ))}
+            </div>
+            <div className="open-search">
+              <Link 
+                to='/search'
+                className='search-page'>
+                  Add a book
+              </Link>
+            </div>
           </div>
-          <div className="list-books-content">
-            {this.shelves.map(shelf => (
-              <Shelf key={shelf}
-                     shelf={shelf}
-                     books={this.state.books}
-                     updateBookShelf={this.updateBookShelf}/>
-            ))}
-          </div>
-          <div className="open-search">
-            <Link 
-              to='/search'
-              className='search-page'>
-                Add a book
-            </Link>
-          </div>
-        </div>
-        )}/>
-        <Route path='/search'
-          render = {() => (
-            <div>
-              {console.log('this.state.books', this.state.books)}
+        </Route>
+        <Route path='/search'>
+          <div>
               <SearchPage updateBookShelf={this.updateBookShelf}
                           books={this.state.books}/>
-            </div>
-          )}
-        />
+          </div>
+        </Route>
       </div>
     )
   }
